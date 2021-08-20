@@ -1,0 +1,146 @@
+---
+title: "Workshop3"
+author: "Meral Erdogan"
+date: "11 08 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(skimr)
+
+
+
+
+survey <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-05-18/survey.csv')
+
+write_csv(survey, "survey_data.csv")
+
+survey%>%glimpse()
+survey%>%skim()
+
+```
+### Data wrangling
+#### Filter
+
+
+```{r}
+survey%>%
+  filter(country=="Australia")
+
+
+
+survey_IT_au<-survey%>%
+  filter(country=="Australia" | country=="australia" | country=="Australi")%>%
+  filter(industry=="Computing or Tech" & annual_salary>80000)
+
+```
+
+#### Select
+
+```{r}
+
+survey_IT_au%>%
+select(how_old_are_you,job_title,annual_salary)%>%
+arrange(desc(annual_salary))
+
+survey%>%
+  distinct(industry)
+
+survey%>%
+  count(industry, gender, sort = TRUE)
+
+
+
+survey_IT_au%>%
+select(-industry)
+
+survey_IT_au%>%
+count(how_old_are_you, job_title, sort=TRUE)
+
+
+survey_IT_au%>%
+count(highest_level_of_education_completed, sort = TRUE)
+
+survey_IT_au%>%add_count(highest_level_of_education_completed, sort = TRUE)
+
+
+survey_IT_au%>%
+count(city, sort = TRUE)
+
+
+survey_IT_au%>%
+distinct(how_old_are_you)
+
+
+```
+
+
+
+```{r}
+survey%>% 
+  filter(gender!="Man")
+```
+
+
+#### 'Mutate' vs 'Transmute'
+
+```{r}
+
+
+class(survey_IT_au$annual_salary)
+
+survey_IT_au<-survey_IT_au%>%
+  mutate(avr_salary=mean(annual_salary))
+
+
+survey_IT_au_grouped<-survey_IT_au%>%
+  group_by(city)%>%
+  mutate(max_salary=max(annual_salary))%>%
+  ungroup()
+
+
+
+survey_IT_au_grouped<-survey_IT_au%>%
+  group_by(city)%>%
+  mutate(max_salary=max(annual_salary))%>%
+  select(how_old_are_you, job_title, city, annual_salary, avr_salary, max_salary)
+
+
+survey_IT_au%>%
+  summarize(min_salary=min(annual_salary))
+
+
+
+survey_IT_au%>%
+  group_by(gender, city)%>%
+  summarize(min_salary=min(annual_salary),
+            max_salary=max(annual_salary),
+            avr_salary=mean(annual_salary))%>%
+  arrange(desc(avr_salary))%>%
+  ungroup()
+
+
+
+survey_IT_au%>%
+  mutate(age=parse_number(how_old_are_you))
+
+survey_IT_au%>%
+  mutate(experience=parse_number(overall_years_of_professional_experience))
+
+
+survey_IT_au%>%
+  mutate(Newjobtitle=case_when(job_title == "Business Analyst" ~ "yes",T ~ "no"))
+
+
+
+
+
+```
+
+
