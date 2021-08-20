@@ -20,21 +20,29 @@ R Markdown documents provide quick, reproducible reporting from R. You write you
 [RMarkdown](https://rmarkdown.rstudio.com/lesson-8.html)
 
 
+```{r}
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+library(knitr)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+fastfood <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
+
+fastfood%>%
+head(10)
+  
+ 
+kable(fastfood[1:10, 1:5])
+
+fastfood%>% 
+filter(calories>1000)  
+
+
+dont_eat_this<-fastfood%>% 
+filter(total_fat>40 & total_carb>80)
+
+fastfood%>% 
+filter(restaurant=="Mcdonalds")
+
+
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
