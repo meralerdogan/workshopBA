@@ -25,6 +25,8 @@ R Markdown documents provide quick, reproducible reporting from R. You write you
 library(knitr)
 
 
+#PART 1
+
 fastfood <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
 
 fastfood%>%
@@ -45,4 +47,67 @@ filter(restaurant=="Mcdonalds")
 
 
 ```
+
+```{r}
+
+#PART 2
+library(skimr)
+
+fastfood%>% 
+skim()
+
+
+fastfood%>% 
+count(restaurant)
+
+fastfood%>% 
+group_by(restaurant)%>% 
+summarise(mean(calories))
+
+
+#14
+fastfood%>% 
+group_by(restaurant)%>% 
+mutate(average_calories = mean(calories)) 
+
+
+#16
+fastfood%>% 
+group_by(restaurant)%>% 
+mutate(max_total_fat = max(calories)) 
+
+
+
+```
+
+
+```{r}
+
+#15
+library(tidyverse)
+library(scales)
+library(lubridate)
+
+theme_set(theme_light())
+
+
+data(fastfood)
+fastfood%>%ggplot(
+ aes(x=restaurant,
+     y=total_fat,
+     color=restaurant,
+     size=15
+     )
+)+
+  geom_line()
+
+
+
+
+```
+
+
+Data visualization gives us a clear idea of what the information means by giving it visual context through maps or graphs. This makes the data more natural for the human mind to comprehend and therefore makes it easier to identify trends, patterns, and outliers within large data sets
+
+
 
