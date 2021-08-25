@@ -21,7 +21,6 @@ R Markdown documents provide quick, reproducible reporting from R. You write you
 
 
 ```{r}
-
 library(knitr)
 
 
@@ -53,13 +52,17 @@ filter(restaurant=="Mcdonalds")
 #PART 2
 library(skimr)
 
+#11
 fastfood%>% 
 skim()
 
 
+#12
 fastfood%>% 
 count(restaurant)
 
+
+#13
 fastfood%>% 
 group_by(restaurant)%>% 
 summarise(mean(calories))
@@ -102,12 +105,59 @@ fastfood%>%ggplot(
   geom_line()
 
 
+```
+Data visualization gives us a clear idea of what the information means by giving it visual context through maps or graphs. This makes the data more natural for the human mind to comprehend and therefore makes it easier to identify trends, patterns, and outliers within large data sets
+
+
+
+```{r}
+#17
+
+fastfood_Mcdonalds<-fastfood%>%
+filter(restaurant=="Mcdonalds")
+
+
+data(fastfood_Mcdonalds)
+fastfood_Mcdonalds%>%ggplot(
+ aes(x=sugar,
+     y=protein,
+     color="red")
+)+
+  geom_point()
 
 
 ```
 
 
-Data visualization gives us a clear idea of what the information means by giving it visual context through maps or graphs. This makes the data more natural for the human mind to comprehend and therefore makes it easier to identify trends, patterns, and outliers within large data sets
+
+```{r}
+#PART 3
+
+#18
+
+
+
+
+
+
+
+#19
+#20
+#21
+#22
+#23
+#24
+
+
+
+
+
+
+
+
+```
+
+
 
 
 
