@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 # RMarkdown ***editing***
 
 
@@ -20,32 +21,42 @@ R Markdown documents provide quick, reproducible reporting from R. You write you
 [RMarkdown](https://rmarkdown.rstudio.com/lesson-8.html)
 
 
+
 ```{r}
 library(knitr)
 
 
 #PART 1
 
+#6
+
 fastfood <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
 
+#7
 fastfood%>%
 head(10)
-  
- 
 kable(fastfood[1:10, 1:5])
 
+
+#8
 fastfood%>% 
 filter(calories>1000)  
 
 
+#9
 dont_eat_this<-fastfood%>% 
 filter(total_fat>40 & total_carb>80)
 
+
+#10
 fastfood%>% 
 filter(restaurant=="Mcdonalds")
 
-
 ```
+
+
+
+
 
 ```{r}
 
@@ -59,13 +70,13 @@ skim()
 
 #12
 fastfood%>% 
-count(restaurant)
+count(restaurant) 
 
 
 #13
 fastfood%>% 
 group_by(restaurant)%>% 
-summarise(mean(calories))
+summarise(average_calories=mean(calories))
 
 
 #14
@@ -77,7 +88,7 @@ mutate(average_calories = mean(calories))
 #16
 fastfood%>% 
 group_by(restaurant)%>% 
-mutate(max_total_fat = max(calories)) 
+mutate(max_total_fat = max(total_fat)) 
 
 
 
@@ -133,19 +144,20 @@ fastfood_Mcdonalds%>%ggplot(
 ```{r}
 #PART 3
 
-#18
-
-
-
-
-
-
 
 #19
 
 fastfood<-fastfood%>%
 mutate(calories_type=cut_number(calories, n=3, labels=c("low", "med", "high")))%>%
-arrange(calories_type)
+arrange(calories)
+
+
+
+#18
+fastfood%>%
+mutate(restaurant=as_factor(restaurant))%>%
+mutate(calories_type=as_factor(calories_type))
+
 
 
 
@@ -153,38 +165,53 @@ arrange(calories_type)
 
 theme_set(theme_light())
 
-fastfood<-fastfood%>%
-mutate(item = fct_lump(item, 6), sort = TRUE)
-fastfood %>% count(item)
- 
-fastfood%>%ggplot(
- aes(x=item,
-     y=calories_type,
-     color=restaurant)
+fastfood%>%
+  mutate(restaurant = fct_reorder(restaurant, calories))%>%
+  ggplot(
+ aes(x=calories_type,
+     fill=restaurant)
 )+
-  geom_count()
- 
-  
- 
+  geom_bar()+
+  facet_wrap(~ restaurant)
+
+
+
+
 #21
 fastfood<-fastfood%>%
 mutate(trans_fat_percent=trans_fat/total_fat*100)
 
 
 #22
+
+fastfood%>%
+ mutate(restaurant = fct_reorder(restaurant, trans_fat))%>%
+  ggplot(
+ aes(x=restaurant,
+     y=trans_fat,
+     fill=restaurant)
+)+
+  geom_boxplot()
+ 
+
+
 #23
 
 fastfood%>%
-  group_by(restaurant)%>%
-  mutate(average_fat=mean(total_fat))
+group_by(restaurant)%>%
+mutate(average_fat=mean(total_fat))
+
+
 
 #24
   
-
-
-
-
-
+fastfood%>%
+  ggplot(
+ aes(x=restaurant,
+     y= total_fat,
+     fill=restaurant)
+)+
+  geom_boxplot()
 
 
 
