@@ -142,11 +142,44 @@ fastfood_Mcdonalds%>%ggplot(
 
 
 #19
+
+fastfood<-fastfood%>%
+mutate(calories_type=cut_number(calories, n=3, labels=c("low", "med", "high")))%>%
+arrange(calories_type)
+
+
+
 #20
+
+theme_set(theme_light())
+
+fastfood<-fastfood%>%
+mutate(item = fct_lump(item, 6), sort = TRUE)
+fastfood %>% count(item)
+ 
+fastfood%>%ggplot(
+ aes(x=item,
+     y=calories_type,
+     color=restaurant)
+)+
+  geom_count()
+ 
+  
+ 
 #21
+fastfood<-fastfood%>%
+mutate(trans_fat_percent=trans_fat/total_fat*100)
+
+
 #22
 #23
+
+fastfood%>%
+  group_by(restaurant)%>%
+  mutate(average_fat=mean(total_fat))
+
 #24
+  
 
 
 
