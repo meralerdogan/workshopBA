@@ -1,0 +1,140 @@
+---
+title: "Assessment2"
+author: "Meral Erdogan - 4634311"
+date: "01 09 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Assessment 2
+
+
+
+```{r}
+
+# R libraries to use
+library(tidyverse)
+library(skimr)
+
+
+
+
+# Read data
+
+data <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-11-20/thanksgiving_meals.csv')
+
+
+```
+
+
+### Dataset
+
+
+parse number age and family income
+
+
+use linear model
+
+LM (family income, age, chose of dish,
+
+you may use as factors
+
+community type is category use this, filter NAs
+
+use facet wrapping
+
+
+7 use income range as factor and use geom bar, you may need to flip it
+
+
+8 use fct lump 
+geom bar
+
+
+
+
+
+
+
+### Part 2: Data Wrangling and visualization
+
+```{r}
+library(knitr)
+
+# 1
+
+kable(data[1:10, ])
+
+
+```
+
+```{r}
+
+#2
+data%>% 
+skim()
+
+```
+what variables may be useful?
+Parameters might be useful to predict family income
+•	main_dish 
+•	main_prep
+•	stuffing
+•	gravy
+•	Number and type of side, pie and dessert
+
+To be able to predict the family income based on their menu main_dish, main_prep, stuffing, gravy, number and type of side , pie and desserts might be useful parameters. Rich people may have different main dish and preparation for their main dish whereas middle income people and poor people might have different main dish and main dish preparation choice. Similarly stuffing and gravy might be different according to income. Also the number and choice of side dishes, pies and desserts might be different according to family income. 
+
+Are all of them correct type?
+No, some of them may not be correct type. We should analyse and see if there is any relation between family income and their choices related with Thanksgiving menu.
+
+
+We can use the same variables to predict community type and US_region as well. Rich people may choose to live in similar community types and similar region of the USA. Menu choices can give us prediction about family income, community type, US region and their travel preferences. If they are having big and fancy Thanks giving meals then most probably their income level is high, they live in good suburbs, and good regions of the USA. 
+
+Some of the parameters might not be correct types. 
+
+
+```{r}
+
+#3
+data%>%
+mutate(family_income = fct_reorder(family_income, parse_number(family_income)))%>%
+count(family_income)%>%
+mutate(family_income=as_factor(family_income))
+  
+```
+
+```{r}
+#4
+data%>%
+count (celebrate )
+ 
+```
+
+980 people celebrates the Thanksgiving and they said "yes". 
+
+
+```{r}
+#5
+data%>%
+#count (main_dish)%>%
+#count (main_prep)%>%
+count (main_dish, main_prep)
+
+
+
+```
+
+
+There are 9 different answers for the main dish but vast majority said they have turkey for Thanksgiving meal. For preparation method there are 6 different answers given and majority said they bake or roast their meal. When I check main dish and preparation method together there are 31 options but vast majority said they have "roasted turkey" or "baked turkey". 
+
+
+
+
+
+
