@@ -116,7 +116,7 @@ count (celebrate )
  
 ```
 
-980 people celebrates the Thanksgiving and they said "yes". 
+980 people celebrates the Thanksgiving and they said "Yes". 
 
 
 ```{r}
@@ -135,6 +135,158 @@ There are 9 different answers for the main dish but vast majority said they have
 
 
 
+```{r}
+#6 first data visualization
 
+library(scales)
+library(lubridate)
+
+theme_set(theme_light())
+
+
+
+data%>%
+count(main_dish, sort = TRUE) %>%
+filter(main_dish != "NA") %>%
+mutate(main_dish = fct_reorder(main_dish, n)) %>%
+ggplot(aes(n, main_dish, fill=main_dish)) +
+  geom_col() +
+  labs(x = "Number of Items",
+       y = "Main Dish",
+       title = "Thanksgiving main dish meals")
+
+
+#First data visualization shows the number of each main dish for the Thanksgiving, it looks like vast majority has turkey for Thanksgiving meal. 
+
+```
+
+```{r}
+
+#6 second data visualization
+
+
+theme_set(theme_gray())
+
+
+data%>%
+count(main_prep, sort = TRUE) %>%
+filter(main_prep != "NA") %>%
+mutate(main_prep = fct_reorder(main_prep, n)) %>%
+ggplot(aes(n, main_prep, fill=main_prep)) +
+  geom_col() +
+  labs(x = "Number of Items",
+       y = "Cooking type",
+       title = "Thanksgiving cooking type for main dish")
+
+#Second data visualization shows the number of cooking method for Thanksgiving meal, from this visualization we see that mainly people choose to bake or roast their dish for Thanksgiving.
+
+```
+```{r}
+
+#6 third data visualization
+
+theme_set(theme_classic())
+
+data%>%
+mutate(main_dish = fct_lump(main_dish, 4)) %>%
+group_by(main_dish)%>% 
+filter(main_prep != "NA" & main_dish != "NA") %>%
+ggplot(aes(main_dish, fill=main_prep)) +
+  geom_bar()+
+
+ labs(x = "",
+       y = "Number of items",
+       title = "Thanksgiving main dish and cooking type")
+
+#Third data visualization shows the distribution of main dish and their cooking method. We see that people choose turkey for main dish and they either bake or roast their turkey. Very few people fry their turkey or they did not say how they cook.
+
+
+```
+
+```{r}
+#6 fourth data visualization
+
+theme_set(theme_gray())
+
+data%>%
+mutate(main_dish = fct_lump(main_dish, 2)) %>%
+group_by(main_dish)%>% 
+filter(main_prep != "NA" & main_dish != "NA") %>%
+ggplot(aes(main_dish, main_prep, color=main_dish)) +
+  geom_count()
+
+
+#Fourth data visualization is very similar to third visualization. It shows the distribution of main dish and their cooking method with different visual element. 
+
+
+```
+```{r}
+#7 
+
+data%>%
+count(cranberry)
+
+
+#502 used canned cranberry, 301 used homemade cranberry and 25 used other cranberry sauce, which makes 828 people used cranberry sauce.
+
+data%>%
+count(gravy)
+
+#892 said they used gravy
+
+```
+
+```{r}
+#8
+
+theme_set(theme_classic())
+
+data%>%
+mutate(family_income = fct_reorder(family_income, parse_number(family_income)))%>%
+ggplot(aes(family_income, fill=celebrate )) +
+geom_bar()+
+coord_flip()+
+labs(x = "Family Income Range",
+     y = "Number of items",
+    title = "Thanksgiving celebration according to family income")
+
+#From this visual we can see that vast majority of people celebrate Thanksgiving from all income ranges. Very few people said "No" and they are from relatively low income ranges. Some people prefer not to answer their income range. 
+
+
+```
+
+
+
+```{r}
+#10
+
+data%>%
+select(id, starts_with("side"),
+         starts_with("pie"),
+         starts_with("dessert")) %>%
+  select(-side15, -pie13, -dessert12) %>%
+  gather(type, value, -id) %>%
+  filter(!is.na(value),
+         !value %in% c("None", "Other (please specify)")) %>%
+  mutate(type = str_remove(type, "\\d+"))
+
+
+# When I execute the R chunk there are 8145 observations with 3 parameters and this code shows the unique ID for person, type of side, pie or dessert and the value for that type of side, pie or dessert. There are 15 different sides, 13 different pies and 12 different desserts.For example person with unique ID number 4337935621 said for one of the side dishes s/he had Brussel sprouts and we will see this specific person again and again according to the number of his/her choice of side, pie and dessert. If s/he has 5 side dishes, 3 pies and 2 desserts then we will see this ID 10 times with his/her choices.
+
+
+```
+
+
+```{r}
+#11
+
+install.packages("widyr")
+library(widyr)
+
+data%>%
+pairwise_cor(main_prep, community_type, age, family_income )
+
+
+```
 
 
