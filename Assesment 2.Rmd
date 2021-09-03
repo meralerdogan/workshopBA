@@ -9,77 +9,53 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
-
-## Assessment 2
-
-
-
-```{r}
-
-# R libraries to use
-library(tidyverse)
-library(skimr)
-
-
-
-
-# Read data
-
-data <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-11-20/thanksgiving_meals.csv')
-
-
-```
-
-
-### Dataset
-
-
-parse number age and family income
-
-
-use linear model
-
-LM (family income, age, chose of dish,
-
-you may use as factors
-
-community type is category use this, filter NAs
-
-use facet wrapping
-
-
-7 use income range as factor and use geom bar, you may need to flip it
-
-
-8 use fct lump 
-geom bar
-
-
-
-
-
+## Name: *Meral Isitir Erdogan*  
+## Student ID: **4634311**
+********
+# Assignment 2
+********
 
 
 ### Part 2: Data Wrangling and visualization
 
+
 ```{r}
+
+# R libraries to use, load below libraries
+library(tidyverse)
+library(skimr)
 library(knitr)
-
-# 1
-
-kable(data[1:10, ])
-
+library(janitor)
+library(ggplot2)
 
 ```
 
-```{r}
 
-#2
+### Part 2 - Reading Data
+```{r}
+# Read data
+
+data <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-11-20/thanksgiving_meals.csv')
+
+```
+
+
+
+### Part 2 - Question 1 - Using kable function to show first 10 rows
+```{r}
+kable(data[1:10, ])
+```
+
+
+### Part 2 - Question 2 - Using skim function to show the summary of variables
+
+```{r}
 data%>% 
 skim()
-
 ```
+
+### Part 2 - Explanation for Question 2
+
 what variables may be useful?
 Parameters might be useful to predict family income
 •	main_dish 
@@ -88,85 +64,83 @@ Parameters might be useful to predict family income
 •	gravy
 •	Number and type of side, pie and dessert
 
-To be able to predict the family income based on their menu main_dish, main_prep, stuffing, gravy, number and type of side , pie and desserts might be useful parameters. Rich people may have different main dish and preparation for their main dish whereas middle income people and poor people might have different main dish and main dish preparation choice. Similarly stuffing and gravy might be different according to income. Also the number and choice of side dishes, pies and desserts might be different according to family income. 
+To be able to predict the family income based on their menu main_dish, main_prep, stuffing, gravy, number and type of side , pie and desserts might be useful parameters. Rich people may have different main dish and preparation for their main dish whereas middle income people and poor people might have different main dish and main dish preparation choice. Similarly stuffing and gravy might be different according to income. Also the number and choice of side dishes, pies and desserts might be different according to family income. From this data set to be able to use type and number of side, pie and dessert we should do some data work, otherwise there are too many columns with NA answers. Since it is Thanksgiving, which is special for everyone and tradition to have turkey almost everybody has turkey as main dish.
+
 
 Are all of them correct type?
 No, some of them may not be correct type. We should analyse and see if there is any relation between family income and their choices related with Thanksgiving menu.
 
 
-We can use the same variables to predict community type and US_region as well. Rich people may choose to live in similar community types and similar region of the USA. Menu choices can give us prediction about family income, community type, US region and their travel preferences. If they are having big and fancy Thanks giving meals then most probably their income level is high, they live in good suburbs, and good regions of the USA. 
+We can use same variables to predict community type and US_region as well. Rich people may choose to live in similar community types and similar region of the USA. Menu choices can give us prediction about family income, community type and US region. If they are having big and fancy Thanks giving meals then most probably their income level is high, they live in good suburbs, and good regions of the USA. Also, type of side dish, pie and dessert might give idea for regions of USA, for example apple pie or pumpkin pie might be popular in certain parts of the USA, but some other parts might prefer to eat pecan pie etc.
 
-Some of the parameters might not be correct types. 
 
+
+Some of the parameters might not be correct types. We should analyse and see if there is any relation between USA region, community type and their menu choices related with Thanksgiving menu.
+
+
+
+### Part 2 - Question 3 Using `fct_reorder` and `parse_number` functions
 
 ```{r}
-
-#3
 data%>%
 mutate(family_income = fct_reorder(family_income, parse_number(family_income)))%>%
-count(family_income)%>%
+filter(family_income != "Prefer not to answer")%>%
 mutate(family_income=as_factor(family_income))
-  
 ```
 
+
+### Part 2 - Question 4 number of people who celebrate
+
 ```{r}
-#4
 data%>%
 count (celebrate )
- 
 ```
 
 980 people celebrates the Thanksgiving and they said "Yes". 
 
 
+### Part 2 - Question 5 categories and insights for each main dish served and the method it is prepared
+
 ```{r}
-#5
 data%>%
-#count (main_dish)%>%
-#count (main_prep)%>%
-count (main_dish, main_prep)
-
-
-
+count (main_dish, main_prep, sort = TRUE)
 ```
 
+There are 9 different answers for the main dish but vast majority said they have turkey for Thanksgiving meal. For preparation method there are 6 different answers given and majority said they bake or roast their meal. When I check main dish and preparation method together there are 31 options but vast majority said they have "baked turkey" or "roasted turkey". 
 
-There are 9 different answers for the main dish but vast majority said they have turkey for Thanksgiving meal. For preparation method there are 6 different answers given and majority said they bake or roast their meal. When I check main dish and preparation method together there are 31 options but vast majority said they have "roasted turkey" or "baked turkey". 
 
+### Part 2 - Question 6 Data viz showing insights for main dish served and the method used
 
 
 ```{r}
-#6 first data visualization
-
+# Load below libraries
 library(scales)
 library(lubridate)
 
+#6 first data visualization
+
 theme_set(theme_light())
-
-
 
 data%>%
 count(main_dish, sort = TRUE) %>%
 filter(main_dish != "NA") %>%
 mutate(main_dish = fct_reorder(main_dish, n)) %>%
-ggplot(aes(n, main_dish, fill=main_dish)) +
+ggplot(aes(n, main_dish, fill= main_dish)) +
   geom_col() +
-  labs(x = "Number of Items",
+  labs(x = "Number of People",
        y = "Main Dish",
-       title = "Thanksgiving main dish meals")
-
-
-#First data visualization shows the number of each main dish for the Thanksgiving, it looks like vast majority has turkey for Thanksgiving meal. 
+       title = "Thanksgiving main dish meals preferences")
 
 ```
 
-```{r}
+Explanation: First data visualization shows the number of people main dish preferences for the Thanksgiving, it looks like vast majority has turkey for Thanksgiving meal. Since it is the tradition to have turkey for Thanksgiving, data visualization looks as expected.
 
+
+
+```{r}
 #6 second data visualization
 
-
 theme_set(theme_gray())
-
 
 data%>%
 count(main_prep, sort = TRUE) %>%
@@ -174,13 +148,16 @@ filter(main_prep != "NA") %>%
 mutate(main_prep = fct_reorder(main_prep, n)) %>%
 ggplot(aes(n, main_prep, fill=main_prep)) +
   geom_col() +
-  labs(x = "Number of Items",
-       y = "Cooking type",
-       title = "Thanksgiving cooking type for main dish")
-
-#Second data visualization shows the number of cooking method for Thanksgiving meal, from this visualization we see that mainly people choose to bake or roast their dish for Thanksgiving.
+  labs(x = "Number of People",
+       y = "Cooking method",
+       title = "Thanksgiving cooking method for main dish")
 
 ```
+Explanation: Second data visualization shows the number of cooking method for Thanksgiving meal, from this visualization we see that mainly people choose to bake or roast their dish for Thanksgiving.Very few people choose to fry their main dish. 
+
+
+
+
 ```{r}
 
 #6 third data visualization
@@ -193,18 +170,17 @@ group_by(main_dish)%>%
 filter(main_prep != "NA" & main_dish != "NA") %>%
 ggplot(aes(main_dish, fill=main_prep)) +
   geom_bar()+
-
- labs(x = "",
-       y = "Number of items",
-       title = "Thanksgiving main dish and cooking type")
-
-#Third data visualization shows the distribution of main dish and their cooking method. We see that people choose turkey for main dish and they either bake or roast their turkey. Very few people fry their turkey or they did not say how they cook.
-
-
+ labs(x = "Main dish",
+       y = "Number of people",
+       title = "Thanksgiving main dish and cooking method")
 ```
 
+Explanation: Third data visualization shows the distribution of main dish and their cooking method. We see that people choose turkey for main dish and they either bake or roast their turkey. Very few people fry their turkey or they did not say how they cook.
+
+
+
 ```{r}
-#6 fourth data visualization
+#6 fourth data visualization 
 
 theme_set(theme_gray())
 
@@ -213,32 +189,35 @@ mutate(main_dish = fct_lump(main_dish, 2)) %>%
 group_by(main_dish)%>% 
 filter(main_prep != "NA" & main_dish != "NA") %>%
 ggplot(aes(main_dish, main_prep, color=main_dish)) +
-  geom_count()
-
-
-#Fourth data visualization is very similar to third visualization. It shows the distribution of main dish and their cooking method with different visual element. 
-
+  geom_count()+
+  labs(x = "Main dish",
+       y = "Cooking Method",
+       title = "Thanksgiving main dish and cooking method")
 
 ```
-```{r}
-#7 
 
+Explanation: Fourth data visualization is very similar to third visualization. It shows the distribution of main dish and their cooking method with different visual elements. Rather than using bars to show numbers this shows with the circles. But we see that both roasted turkey or baked turkey have circles around 400 in size, baked turkey is little bit bigger than roasted turkey, and it was the highest which is 422. 
+
+
+
+
+### Part 2 - Question 7 number of cranberry sauce and number of gravy
+
+```{r}
 data%>%
 count(cranberry)
-
-
-#502 used canned cranberry, 301 used homemade cranberry and 25 used other cranberry sauce, which makes 828 people used cranberry sauce.
 
 data%>%
 count(gravy)
 
-#892 said they used gravy
-
 ```
 
-```{r}
-#8
+For cranberry; 502 people used canned cranberry, 301 people used homemade cranberry and 25 people used other cranberry sauce, which makes 828 people used cranberry sauce. For gravy 892 people said they used gravy.
 
+
+### Part 2 - Question 8 Data Visualization for distribution of those who celebrate across income ranges
+
+```{r}
 theme_set(theme_classic())
 
 data%>%
@@ -247,20 +226,23 @@ ggplot(aes(family_income, fill=celebrate )) +
 geom_bar()+
 coord_flip()+
 labs(x = "Family Income Range",
-     y = "Number of items",
-    title = "Thanksgiving celebration according to family income")
-
-#From this visual we can see that vast majority of people celebrate Thanksgiving from all income ranges. Very few people said "No" and they are from relatively low income ranges. Some people prefer not to answer their income range. 
-
-
+     y = "Number of people",
+    title = "Thanksgiving celebration according to family income range")
 ```
 
+Explanation: From this visual we can see that vast majority of people celebrate Thanksgiving from all income ranges. Very few people said "No" and they are from relatively low income ranges. Some people prefer not to answer their income range. 
 
+
+
+### Part 2 - Question 9 is missing 
+
+
+
+
+### Part 2 - Question 10 Using the Provided Code
 
 ```{r}
-#10
-
-data%>%
+newdata <- data %>%
 select(id, starts_with("side"),
          starts_with("pie"),
          starts_with("dessert")) %>%
@@ -269,24 +251,66 @@ select(id, starts_with("side"),
   filter(!is.na(value),
          !value %in% c("None", "Other (please specify)")) %>%
   mutate(type = str_remove(type, "\\d+"))
-
-
-# When I execute the R chunk there are 8145 observations with 3 parameters and this code shows the unique ID for person, type of side, pie or dessert and the value for that type of side, pie or dessert. There are 15 different sides, 13 different pies and 12 different desserts.For example person with unique ID number 4337935621 said for one of the side dishes s/he had Brussel sprouts and we will see this specific person again and again according to the number of his/her choice of side, pie and dessert. If s/he has 5 side dishes, 3 pies and 2 desserts then we will see this ID 10 times with his/her choices.
-
-
 ```
 
+When I execute the R chunk there are 8145 observations with 3 parameters and this code shows the unique ID for person, type of side, pie or dessert and the value for that type of side, pie or dessert. To be able to exclude "Other (please specify)" option columns Side15, pie13 and dessert12 are excluded. So there are 14 different sides, 12 different pies and 11 different desserts. Columns side14, pie12, dessert12 have answer of "Other (please specify)" and these are filtered as well. Also answers of "na" and "None" are also filtered. For example person with unique ID number 4337935621 said for one of the side dishes s/he had Brussel sprouts and we will see this specific person again and again according to the number of his/her choice of side, pie and dessert. If s/he has 5 side dishes, 3 pies and 2 desserts then we will see this ID 10 times with his/her choices. With this code we can continue our analysis of side, pie or dessert selections of people for Thanksgiving.
+
+
+
+### Part 2 - Question 11 Using `pairwise_cor()` function
 
 ```{r}
-#11
-
-install.packages("widyr")
+#install package and load library
+#install.packages("widyr")
 library(widyr)
 
-data%>%
-pairwise_cor(main_prep, community_type, age, family_income )
+newdata%>%
+pairwise_cor(value, id, sort = TRUE)
+```
+Explanation: Pairwise correlation finds the correlations of pairs of items in a column.
+We can check if there is any relation between items. For example, in our data set we can search if cookies goes with brownies, if they are related with each other. Maybe ice cream is eaten with brownies because they go well together. We can check with this function. It helps us to see if they are correlated or not by using their unique ID number.
 
+When I execute the new data set with pairwise_cor I see that Cookies and Brownies are correlated with 0.41, which is the highest correlation and followed by Sweet Potato and Macaroni and cheese. It makes the correlation by using their unique ID. 
+
+
+
+### Part 2 - Question 13 Building a Model
+```{r}
+#load library
+library(randomForest)
+
+data<-data%>%
+mutate(family_income_number = parse_number(as.character(family_income)))%>%
+filter(!is.na(family_income_number))
+summary(data)
+
+
+Random_forest_result1 <- randomForest(family_income_number~celebrate+main_dish+age+community_type, data=data, na.action = na.omit)
+summary(Random_forest_result1)
+
+Random_forest_result2 <- randomForest(family_income_number~community_type+gender+us_region, data=data, na.action = na.omit)
+summary(Random_forest_result2)
+
+Random_forest_result3 <- randomForest(family_income_number~main_dish+travel+us_region+prayer+age, data=data, na.action = na.omit)
+
+summary(Random_forest_result3)
 
 ```
+Explanation: 
+
+In my first model I have used "celebrate", "main_dish", "age" and "community_type" variables to predict family income thinking that these variables might affect the family income.
+
+In my second model I have used "community_type", "gender" and "us_region" variables to predict family income.
+
+In my third model I have used "main_dish", "travel", "us_region", "prayer" and "age" variables to predict family income.
+
+I think first model is the best because it has more prediction than other two models. In first model I had 829 prediction but in the second and third model I had 814 prediction. In first model the number of na.action item which means omitted item is 60, but in second and third model it is 75. 
+
+
+
+
+
+
+
 
 
