@@ -1,0 +1,242 @@
+---
+title: "Assignment 1"
+author: "Meral Erdogan"
+date: "09 09 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# RMarkdown ***editing***
+
+
+[RMarkdown](https://rmarkdown.rstudio.com/lesson-8.html) documents provide quick, reproducible reporting from R. You write your document in markdown and embed executable R code chunks with the knitr syntax. You can update your document at any time by re-knitting the code chunks. You can then convert your document into several common formats.
+
+
+
+#PART 1
+
+# Loading Libraries
+
+```{r}
+# R libraries to use, load below libraries
+library(tidyverse)
+library(skimr)
+library(knitr)
+library(janitor)
+library(ggplot2)
+library(scales)
+library(lubridate)
+```
+
+
+
+
+```{r}
+#6 Reading data
+
+fastfood<-read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
+```
+
+
+```{r}
+#7A Displaying first 10 rows
+head(fastfood, 10)
+```
+
+```{r}
+#7B Displaying first 10 rows and 5 variables using function kable
+kable(fastfood[1:10, 1:5])
+```
+
+
+
+```{r}
+#8 Showing observations with more than 1000 calories
+fastfood%>% 
+filter(calories>1000) 
+```
+
+```{r}
+#9 Showing observations with more than 40 in total_fat and more than 80 in total_carb 
+dont_eat_this<-fastfood%>%
+filter(total_fat>40, total_carb>80)
+print(dont_eat_this)
+```
+
+
+
+
+```{r}
+#10 Showing observations for restaurant Mcdonalds
+fastfood%>%
+filter(restaurant == "Mcdonalds")
+```
+
+
+
+#PART 2
+
+```{r}
+#11 Displaying the types of variables with using function skimr
+fastfood%>% 
+skim()
+```
+
+
+
+```{r}
+#12 Displaying number of observations for each restaurant
+fastfood%>% 
+count(restaurant, sort = TRUE) 
+```
+
+
+```{r}
+#13 Displaying average number of calories for each restaurant using function groupby 
+fastfood%>% 
+group_by(restaurant)%>% 
+summarise(average_calories=mean(calories))%>%
+arrange(desc(average_calories))%>%
+ungroup()
+```
+
+
+```{r}
+#14 Adding new variable average calories to the data set
+fastfood<-fastfood%>% 
+group_by(restaurant)%>% 
+mutate(average_calories = mean(calories))%>%
+ungroup()
+```
+
+
+
+
+
+```{r}
+#15 Displaying total fat for each restaurant with data visualization
+theme_set(theme_light())
+fastfood%>%
+mutate(restaurant = fct_reorder(restaurant, total_fat))%>%
+ggplot(aes(x=restaurant,
+     y=total_fat))+
+  geom_col()+
+  coord_flip()+
+  labs(x = "Restaurant",
+       y = "Total fat",
+       title = "Total fat for each restaurant")
+```
+
+Explanation: From this data visualization we can see the total fat for each fast food restaurant. We can say Burger King has the highest amount of fat followed by Taco Bell. Chick Fil-A has the least amount of fat and looks like it is better option in terms of fat.
+
+
+```{r}
+#16 Adding max total fat variable to the data set
+fastfood<-fastfood%>% 
+group_by(restaurant)%>% 
+mutate(max_total_fat = max(total_fat))%>%
+ungroup()
+```
+
+
+
+
+
+```{r}
+#17 Data visualization of sugar & protein values in Mcdonalds
+fastfood%>%
+filter(restaurant == "Mcdonalds")%>%
+ggplot(aes(x=sugar,
+     y=protein,
+     color="red"))+
+  geom_point()+
+  labs(x = "Sugar",
+       y = "Protein",
+       title = "Sugar & Protein Values for Mcdonalds")
+```
+Explanation: In this chart we can see the sugar and protein values of Mcdonalds. Most of the sugar values are in between zero and twenty and similarly most of the protein values are in between zero and fifty. There are some outliers as well. This visualization is crucial in terms of showing the density.
+
+
+
+#PART 3
+
+```{r}
+#18 Converting variable into a factor
+fastfood%>%
+mutate(restaurant=as_factor(restaurant))
+```
+
+```{r}
+#19 Adding new variable calories type to data set
+fastfood<-fastfood%>%
+mutate(calories_type=cut_number(calories, n=3, labels=c("low", "med", "high"), ordered_result=TRUE))
+```
+
+
+```{r}
+#20 Data Visualization for number of calories type for each restaurant
+theme_set(theme_light())
+fastfood%>%
+ mutate(restaurant = fct_reorder(restaurant, calories))%>%
+  ggplot(
+ aes(x=calories_type,
+     fill=restaurant))+
+  geom_bar()+
+  labs(x = "Calories Type",
+       y = "Amount",
+       title = "Number of Calories Type for Each Restaurant")+
+  facet_wrap(~ restaurant)
+```
+
+
+
+```{r}
+#21 Adding percentage of trans_fat in total_fat
+fastfood<-fastfood%>%
+mutate(trans_fat_percent=trans_fat/total_fat*100)
+```
+
+
+```{r}
+#22 Data Visualization for trans_fat in each restaurant
+fastfood%>%
+ggplot(aes(x=restaurant,
+     y=trans_fat,
+     fill=restaurant))+
+  geom_boxplot()+
+  labs(x = "Restaurant",
+       y = "Trans Fat",
+       title = "Distribution of Transfat for Each Restaurant")
+```
+
+
+```{r}
+#23 Calculating average total fat for each restaurant
+fastfood%>%
+group_by(restaurant)%>%
+summarise(average_total_fat=mean(total_fat))%>%
+arrange(desc(average_total_fat))%>%
+ungroup()
+```
+
+
+
+```{r}
+#24 Data visualization to compare restaurants for total fat
+fastfood%>%
+  ggplot(
+ aes(x=restaurant,
+     y= total_fat,
+     fill=restaurant)
+)+
+  geom_boxplot()
+```
+
+
+
+
+
+

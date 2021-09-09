@@ -32,26 +32,39 @@ library(knitr)
 
 fastfood <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
 
+```
+
+```{r}
+
 #7
 fastfood%>%
 head(10)
 kable(fastfood[1:10, 1:5])
 
+```
 
+
+
+```{r}
 #8
 fastfood%>% 
-filter(calories>1000)  
+filter(calories>1000) 
+
+```
 
 
+```{r}
 #9
 dont_eat_this<-fastfood%>% 
 filter(total_fat>40 & total_carb>80)
+```
 
 
+
+```{r}
 #10
 fastfood%>% 
 filter(restaurant=="Mcdonalds")
-
 ```
 
 
@@ -63,36 +76,47 @@ filter(restaurant=="Mcdonalds")
 #PART 2
 library(skimr)
 
+
+```
+
+
+
+```{r}
 #11
 fastfood%>% 
 skim()
+```
 
 
+```{r}
 #12
 fastfood%>% 
 count(restaurant) 
 
+```
 
+
+
+```{r}
 #13
 fastfood%>% 
 group_by(restaurant)%>% 
 summarise(average_calories=mean(calories))
 
+```
 
+
+
+
+
+```{r}
 #14
 fastfood%>% 
 group_by(restaurant)%>% 
 mutate(average_calories = mean(calories)) 
 
-
-#16
-fastfood%>% 
-group_by(restaurant)%>% 
-mutate(max_total_fat = max(total_fat)) 
-
-
-
 ```
+
 
 
 ```{r}
@@ -121,6 +145,16 @@ Data visualization gives us a clear idea of what the information means by giving
 
 
 
+
+```{r}
+#16
+fastfood%>% 
+group_by(restaurant)%>% 
+mutate(max_total_fat = max(total_fat)) 
+
+```
+
+
 ```{r}
 #17
 
@@ -145,24 +179,30 @@ fastfood_Mcdonalds%>%ggplot(
 #PART 3
 
 
+```
+
+
+```{r}
+#18
+fastfood%>%
+mutate(restaurant=as_factor(restaurant))
+#mutate(calories_type=as_factor(calories_type))
+
+```
+
+
+```{r}
 #19
 
 fastfood<-fastfood%>%
 mutate(calories_type=cut_number(calories, n=3, labels=c("low", "med", "high")))%>%
 arrange(calories)
 
+```
 
 
-#18
-fastfood%>%
-mutate(restaurant=as_factor(restaurant))%>%
-mutate(calories_type=as_factor(calories_type))
-
-
-
-
+```{r}
 #20
-
 theme_set(theme_light())
 
 fastfood%>%
@@ -174,14 +214,18 @@ fastfood%>%
   geom_bar()+
   facet_wrap(~ restaurant)
 
+```
 
 
+```{r}
 
 #21
 fastfood<-fastfood%>%
 mutate(trans_fat_percent=trans_fat/total_fat*100)
 
+```
 
+```{r}
 #22
 
 fastfood%>%
@@ -192,17 +236,21 @@ fastfood%>%
      fill=restaurant)
 )+
   geom_boxplot()
- 
+```
 
 
+```{r}
 #23
-
 fastfood%>%
 group_by(restaurant)%>%
 mutate(average_fat=mean(total_fat))
 
+```
 
 
+
+
+```{r}
 #24
   
 fastfood%>%
@@ -213,15 +261,5 @@ fastfood%>%
 )+
   geom_boxplot()
 
-
-
-
-
-
-
 ```
-
-
-
-
 
