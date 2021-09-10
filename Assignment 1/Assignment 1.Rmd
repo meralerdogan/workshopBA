@@ -119,10 +119,10 @@ ungroup()
 ```{r}
 #15 Displaying total fat for each restaurant with data visualization
 theme_set(theme_light())
-fastfood%>%
-mutate(restaurant = fct_reorder(restaurant, total_fat))%>%
+fastfood %>%
+mutate(restaurant = fct_reorder(restaurant, total_fat, sum ))%>%
 ggplot(aes(x=restaurant,
-     y=total_fat))+
+     y=total_fat, fill=restaurant))+
   geom_col()+
   coord_flip()+
   labs(x = "Restaurant",
