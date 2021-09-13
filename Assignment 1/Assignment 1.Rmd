@@ -218,7 +218,7 @@ ggplot(aes(trans_fat,
   facet_wrap(~ restaurant, nrow = 2)
 ```
 
-Explanation: In this chart we can see the distribution of trans fat for each type of restaurant. Sonic is distributed the most. There are some outliers for couple of restaurant. Burger King has an outlier with value 8 which the highest.Subway and Taco Bell have the highest amount of zero trans fat counts. 
+Explanation: In this chart we can see the distribution of trans fat for each type of restaurant. Sonic is distributed the most. There are some outliers for couple of restaurants. Burger King has an outlier with value 8 which the highest.Subway and Taco Bell have the highest amount of zero trans fat counts. 
 
 
 
