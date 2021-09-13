@@ -1,5 +1,5 @@
 ---
-title: "Assignment 1"
+title: "Assessment 1.1"
 author: "Meral Erdogan"
 date: "09 09 2021"
 output: html_document
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #PART 1
 
-# Loading Libraries
+## Loading Libraries
 
 ```{r}
 # R libraries to use, load below libraries
@@ -36,33 +36,32 @@ library(lubridate)
 
 ```{r}
 #6 Reading data
-
 fastfood<-read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
 ```
 
 
 ```{r}
-#7A Displaying first 10 rows
+#7A Displaying first 10 rows using function head
 head(fastfood, 10)
 ```
 
 ```{r}
 #7B Displaying first 10 rows and 5 variables using function kable
-kable(fastfood[1:10, 1:5])
+kable(fastfood[1:10, 1:5], caption = "First 10 Rows and first 5 Variables of Fastfood Dataset")
 ```
 
 
 
 ```{r}
-#8 Showing observations with more than 1000 calories
+#8 Showing observations with more than 1000 calories by using function filter
 fastfood%>% 
 filter(calories>1000) 
 ```
 
 ```{r}
-#9 Showing observations with more than 40 in total_fat and more than 80 in total_carb 
+#9 Showing observations with more than 40 in total_fat and more than 80 in total_carb by using function filter
 dont_eat_this<-fastfood%>%
-filter(total_fat>40, total_carb>80)
+filter(total_fat>40 & total_carb>80)
 print(dont_eat_this)
 ```
 
@@ -70,7 +69,7 @@ print(dont_eat_this)
 
 
 ```{r}
-#10 Showing observations for restaurant Mcdonalds
+#10 Showing observations for restaurant Mcdonalds by using function filter
 fastfood%>%
 filter(restaurant == "Mcdonalds")
 ```
@@ -80,7 +79,7 @@ filter(restaurant == "Mcdonalds")
 #PART 2
 
 ```{r}
-#11 Displaying the types of variables with using function skimr
+#11 Displaying the types of variables by using function skimr
 fastfood%>% 
 skim()
 ```
@@ -88,14 +87,14 @@ skim()
 
 
 ```{r}
-#12 Displaying number of observations for each restaurant
+#12 Displaying number of observations for each restaurant by using function count
 fastfood%>% 
 count(restaurant, sort = TRUE) 
 ```
 
 
 ```{r}
-#13 Displaying average number of calories for each restaurant using function groupby 
+#13 Displaying average number of calories for each restaurant using function groupby and summarise
 fastfood%>% 
 group_by(restaurant)%>% 
 summarise(average_calories=mean(calories))%>%
@@ -115,7 +114,6 @@ ungroup()
 
 
 
-
 ```{r}
 #15 Displaying total fat for each restaurant with data visualization
 theme_set(theme_light())
@@ -127,20 +125,21 @@ ggplot(aes(x=restaurant,
   coord_flip()+
   labs(x = "Restaurant",
        y = "Total fat",
-       title = "Total fat for each restaurant")
+       title = "Total fat for each type of restaurant")
 ```
 
-Explanation: From this data visualization we can see the total fat for each fast food restaurant. We can say Burger King has the highest amount of fat followed by Taco Bell. Chick Fil-A has the least amount of fat and looks like it is better option in terms of fat.
+Explanation: From this data visualization we can see total fat for each type of fast food restaurant. We can say Burger King has the highest amount of fat followed by Taco Bell. Chick Fil-A has the least amount of fat and looks like it is better option in terms of fat. Data visualization gives us a clear idea of what the information means by giving it visual context through maps or graphs. This makes the data more natural for the human mind to comprehend and therefore makes it easier to identify trends, patterns, and outliers within large data sets.
+
+
 
 
 ```{r}
-#16 Adding max total fat variable to the data set
+#16 Adding max total fat variable to the data set by using function groupby and mutate
 fastfood<-fastfood%>% 
 group_by(restaurant)%>% 
 mutate(max_total_fat = max(total_fat))%>%
 ungroup()
 ```
-
 
 
 
@@ -157,7 +156,7 @@ ggplot(aes(x=sugar,
        y = "Protein",
        title = "Sugar & Protein Values for Mcdonalds")
 ```
-Explanation: In this chart we can see the sugar and protein values of Mcdonalds. Most of the sugar values are in between zero and twenty and similarly most of the protein values are in between zero and fifty. There are some outliers as well. This visualization is crucial in terms of showing the density.
+Explanation: In this chart we can see the sugar and protein values for Mcdonalds. Most of the sugar values are in between zero and twenty and similarly most of the protein values are in between zero and fifty. There are some outliers as well. This visualization is crucial in terms of showing the density.
 
 
 
@@ -168,28 +167,35 @@ Explanation: In this chart we can see the sugar and protein values of Mcdonalds.
 fastfood%>%
 mutate(restaurant=as_factor(restaurant))
 ```
+We can convert variables, which we can use them to group by data, into a factor variable. In our case and for now we can convert variable restaurant into a factor variable. 
+
+
 
 ```{r}
-#19 Adding new variable calories type to data set
+#19 Creating new variable calories type to data set
 fastfood<-fastfood%>%
 mutate(calories_type=cut_number(calories, n=3, labels=c("low", "med", "high"), ordered_result=TRUE))
 ```
+
+
 
 
 ```{r}
 #20 Data Visualization for number of calories type for each restaurant
 theme_set(theme_light())
 fastfood%>%
- mutate(restaurant = fct_reorder(restaurant, calories))%>%
+  mutate(restaurant = fct_reorder(restaurant, calories, sum))%>%
   ggplot(
  aes(x=calories_type,
      fill=restaurant))+
   geom_bar()+
   labs(x = "Calories Type",
-       y = "Amount",
+       y = "Count",
        title = "Number of Calories Type for Each Restaurant")+
-  facet_wrap(~ restaurant)
+  facet_wrap(~ restaurant, nrow = 2)
 ```
+
+Explanation: In this chart we can see the amount of calories type for each restaurant. Taco Bell has the highest amount of calories type counted followed by Subway which is normal these two restaurants have the highest amount of observations. Chick Fil-A has the least amount.
 
 
 
@@ -203,14 +209,18 @@ mutate(trans_fat_percent=trans_fat/total_fat*100)
 ```{r}
 #22 Data Visualization for trans_fat in each restaurant
 fastfood%>%
-ggplot(aes(x=restaurant,
-     y=trans_fat,
+ggplot(aes(trans_fat,
      fill=restaurant))+
-  geom_boxplot()+
-  labs(x = "Restaurant",
+  geom_dotplot()+
+  labs(x = "",
        y = "Trans Fat",
-       title = "Distribution of Transfat for Each Restaurant")
+       title = "Distribution of Transfat for Each Restaurant")+
+  facet_wrap(~ restaurant, nrow = 2)
 ```
+
+Explanation: In this chart we can see the distribution of trans fat for each type of restaurant. Sonic is distributed the most. There are some outliers for couple of restaurant. Burger King has an outlier with value 8 which the highest.Subway and Taco Bell have the highest amount of zero trans fat counts. 
+
+
 
 
 ```{r}
@@ -235,8 +245,6 @@ fastfood%>%
   geom_boxplot()
 ```
 
-
-
-
+Explanation: In this chart we can see the distribution of total fat for each type of restaurant. There are some outlier for 6 different restaurants. Overall, we can say they are evenly distributed. Burger King and Sonic have highest values and wider distribution. 
 
 
